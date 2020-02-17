@@ -7,7 +7,9 @@ Order           = require('../models/orders'),
 Product         = require('../models/products');
 
 router.get('/', (req, res, next) => {
-    Order.find().select('product quantity _id')
+    Order.find()
+        .select('product quantity _id')
+        .populate('product', 'name')
         .exec()
         .then(docs => res.status(200).json({
             count: docs.length,
@@ -57,6 +59,7 @@ router.post('/', (req, res, next) => {
 router.get('/:orderId', (req, res, next) => {
     const _id = req.params.orderId
     Order.findById( _id )
+    .populate('product')
     .exec()
     .then(order => {
         if (!order) {
